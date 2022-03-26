@@ -1,0 +1,9 @@
+# See https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+admin:
+  author: admin
+  text: Important comment
+
+simpleuser:
+  author: simpleuser
+  text: Simple comment
