@@ -1,0 +1,4 @@
+#!/bin/sh
+# Start in development mode
+
+bundle exec foreman start -f Procfile.dev

@@ -3,6 +3,11 @@ require "test_helper"
 class CommentsControllerTest < ActionDispatch::IntegrationTest
   setup do
     @comment = comments(:admin)
+    if !ENV.keys.include?('CONFIG_HOSTS') || 
+        ENV['CONFIG_HOSTS'] != 'www.example.com'
+      puts "Please run controller tests with CONFIG_HOSTS='www.example.com'"
+      exit 1
+    end
   end
 
   test "should get index" do

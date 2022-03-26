@@ -1,0 +1,25 @@
+#!/bin/sh
+# Stops services
+
+if (test -f ".env") then {
+  . .env
+} fi;
+
+# Trying to stop rails
+if (test -f tmp/pids/server.pid) then { 
+  pp=`cat tmp/pids/server.pid`
+  pp=`expr $pp`
+  ps -p $pp | grep "ruby.*: puma" > /dev/null 2>&1
+  if (test "$?" = "0") then {
+    # Active and with ruby 
+    echo "Killing process with rails $pp"
+    kill -9 $pp
+  } fi;
+} fi;
+
+# Trying to stop webpacker-dev-server
+pn=`fstat | grep $WEBPACKER_DEV_SERVER_PORT | sed -e "s/^[^\s]* node *\([0-9][0-9]*\) .*/\1/g" | sort -u`
+if (test "$pn" != "") then {
+  echo "Killing process with node $pn"
+  kill -9 $pn
+} fi;
