@@ -1,0 +1,21 @@
+<h1>Based on "generated scaffold"</h1>
+<hr/>
+
+<p style="color: green"><%= notice %></p>
+
+<h2>Listing Comments</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>Author</th>
+      <th>Text</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @comments.each do |comment| %>
+      <%= render comment %>
+    <% end %>
+</div>
+
+<%= link_to "New comment", new_comment_path %>
