@@ -19,3 +19,7 @@ console.log('Hello world from ESM')
 //import 'assets/stylesheets/application.scss'
 import 'assets/stylesheets/application.scss'
 import * as bootstrap from 'bootstrap'
+
+import Footer from '../bundles/comments/layout/Footer'
+import NavigationBar from '../bundles/comments/layout/NavigationBar'
+

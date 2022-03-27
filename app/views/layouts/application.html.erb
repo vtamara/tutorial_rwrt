@@ -11,6 +11,11 @@
   </head>
 
   <body>
+    <%= react_component("NavigationBar", props: @navigationbar_props, prerender: true) %>
+
     <%= yield %>
+
+    <hr/>
+    <%= react_component("Footer", props: @footer_props, prerender: true) %>
   </body>
 </html>

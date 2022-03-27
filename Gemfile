@@ -61,3 +61,5 @@ group :test do
   gem "selenium-webdriver"
   gem "webdrivers"
 end
+
+gem "react_on_rails", "~> 13.0"
