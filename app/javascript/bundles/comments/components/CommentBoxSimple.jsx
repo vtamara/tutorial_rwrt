@@ -3,6 +3,9 @@ import PropTypes from 'prop-types';
 import Immutable from 'immutable';
 import _ from 'lodash';
 import BaseComponent from 'lib/components/BaseComponent';
+import { injectIntl } from 'react-intl';
+import SelectLanguage from 'lib/i18n/selectLanguage';
+import { defaultMessages, defaultLocale } from 'lib/i18n/default'; 
 import CommentFormStacked from './CommentFormStacked';
 import CommentList, { commentPropTypes } from './CommentList';
 import css from './CommentBox.module.scss';
@@ -19,8 +22,10 @@ class CommentBoxSimple extends BaseComponent {
       cssTransitionGroupClassNames: PropTypes.oneOfType([PropTypes.object]).isRequired,
       fetchCommentError: PropTypes.string,
       isSaving: PropTypes.bool,
+      locale: PropTypes.string,
       submitCommentError: PropTypes.string,
     }).isRequired,
+    intl: PropTypes.objectOf(PropTypes.any).isRequired,
   };
 
   constructor() {
@@ -29,23 +34,27 @@ class CommentBoxSimple extends BaseComponent {
   }
 
   render() {
-    const { actions, data } = this.props;
+    const { actions, data, intl } = this.props;
+    const { formatMessage } = intl;
+    const locale = data.locale || defaultLocale;
 
     /* eslint-disable no-script-url */
 
     return (
       <div className="commentBox container">
-        <h2>Comments</h2>
+        <h2>{formatMessage(defaultMessages.comments)}</h2>
+        {SelectLanguage(actions.setLocale, locale)}
         <ul>
-          <li>Text supports Github Flavored Markdown.</li>
-          <li>Comments older than 24 hours are deleted.</li>
-          <li>Name is preserved. Text is reset, between submits.</li>
+          <li>{formatMessage(defaultMessages.descriptionSupportMarkdown)}</li>
+          <li>{formatMessage(defaultMessages.descriptionDeleteRule)}</li>
+          <li>{formatMessage(defaultMessages.descriptionSubmitRule)}</li>
         </ul>
         <CommentFormStacked
           isSaving={data.isSaving}
           actions={{ submitComment: actions.submitComment}}
           error={data.submitCommentError}
           cssTransitionGroupClassNames={data.cssTransitionGroupClassNames}
+          intl={intl}
         />
         <CommentList
           $$comments={data.$$comments}
@@ -57,4 +66,4 @@ class CommentBoxSimple extends BaseComponent {
   }
 }
 
-export default CommentBoxSimple;
+export default injectIntl(CommentBoxSimple);

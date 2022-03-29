@@ -9,6 +9,8 @@ import FormGroup from 'react-bootstrap/FormGroup';
 import Button from 'react-bootstrap/Button';
 import Alert from 'react-bootstrap/Alert';
 import _ from 'lodash';
+import { injectIntl } from 'react-intl';
+import { defaultMessages } from 'lib/i18n/default';
 import BaseComponent from 'lib/components/BaseComponent';
 
 import css from './CommentForm.module.scss';
@@ -30,6 +32,7 @@ class CommentFormStacked extends BaseComponent {
     actions: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
     error: PropTypes.oneOfType([PropTypes.any]),
     cssTransitionGroupClassNames: PropTypes.oneOfType([PropTypes.func, PropTypes.any]).isRequired,
+    intl: PropTypes.objectOf(PropTypes.any).isRequired,
   };
 
   constructor(props, context) {
@@ -71,15 +74,16 @@ class CommentFormStacked extends BaseComponent {
   }
 
   formStacked() {
+    const { formatMessage } = this.props.intl;
     return (
       <div>
         <hr />
         <form className="commentForm form form-stacked" onSubmit={this.handleSubmit}>
           <FormGroup controlId="formBasicName" className={css.formGroup}>
-            <FormLabel>Name</FormLabel>
+            <FormLabel>{formatMessage(defaultMessages.inputNameLabel)}</FormLabel>
             <FormControl
               type="text"
-              placeholder="Your Name"
+              placeholder={formatMessage(defaultMessages.inputNamePlaceholder)}
               ref="stackedAuthorNode"
               value={this.state.comment.author}
               onChange={this.handleChange}
@@ -88,11 +92,11 @@ class CommentFormStacked extends BaseComponent {
             />
           </FormGroup>
           <FormGroup controlId="formBasicText" className={css.formGroup}>
-            <FormLabel>Text</FormLabel>
+            <FormLabel>{formatMessage(defaultMessages.inputTextLabel)}</FormLabel>
             <FormControl
               type="textarea"
               label="Text"
-              placeholder="Say something using markdown..."
+              placeholder={formatMessage(defaultMessages.inputTextPlaceholder)}
               ref="stackedTextNode"
               value={this.state.comment.text}
               onChange={this.handleChange}
@@ -103,8 +107,8 @@ class CommentFormStacked extends BaseComponent {
           <FormGroup controlId="formBasicSubmit" className={css.formGroup}>
             <Button type="submit" className="btn btn-primary" disabled={this.props.isSaving}>
               {this.props.isSaving
-                ? "Saving..."
-                : "Post"}
+                ? `${formatMessage(defaultMessages.inputSaving)}...`
+                : formatMessage(defaultMessages.inputPost)}
             </Button>
           </FormGroup>
         </form>
@@ -144,6 +148,8 @@ class CommentFormStacked extends BaseComponent {
     let inputForm;
     inputForm = this.formStacked();
 
+    const { formatMessage } = this.props.intl;
+
     // For animation with ReactCSSTransitionGroup
     //   https://facebook.github.io/react/docs/animation.html
     // The 500 must correspond to the 0.5s in:
@@ -156,4 +162,4 @@ class CommentFormStacked extends BaseComponent {
   }
 }
 
-export default CommentFormStacked;
+export default injectIntl(CommentFormStacked);

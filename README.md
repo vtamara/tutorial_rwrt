@@ -15,6 +15,7 @@ In this branch you find the complete demo.  The intermediate branches are:
    bootstrap
 * `3-layout` Layout with react components for Header and Footer.
 * `4-simple` Components for the demo Simple React using `bootstrap-react`
+* `5-i18n`  Adding messages in several languages (including spanish)
 
 
 # How to run this demo
@@ -69,84 +70,110 @@ bundle
 
 # How we created this example
 
-* Check previous steps in branch `3-layout`
+* Check previous steps in branch `4-simple`
 
-* Seems that grouping components in a bundle is a recommended practice, 
-  adopting with bundle comments located at `app/javascript/bundles/comments` 
-  (although `hello_world` is in bundle `HelloWorld` 
-  so it is not clear notation CamelCase or lowercase with underlines).
+* We added the package `react-intl`
 
-* Seems that extending new React components from 
-  `lib/components/BaseComponent.jsx` is a recommended practice
-  (although initally it is just React.Component).  Adopting it.
+* From `react-webpacker-rails-tutorial` we copied `i18n` in
+  `app/javascript/lib/i18n` with the files:
+  * `default.js` Defines the translatable messages in an object where
+     the property name is the name to use in the application with the function
+     `formatMessage`, for example:
+     ```
+     "inputNameLabel": {
+       "id": "input.name.label",
+       "defaultMessage": "Name"
+     },
+     ```
+     In each value there is an object with properties `id` and 
+     `defaultMessage`.
+     `id` is used in the file `translations.js`, `defaultMessage` is the
+     message in the `defaultLocale` (also defined in this file). 
+     We reformatted this file.
+  * `translations.js` is an object with several translations (it repeats
+    english). The id of each string corresponds to an id in `default.js`
+  * `selectLanguage.jsx` Functional React component to select
+    desired language according to the available at `translations.js`.  
+    Receives the function to call once a new language is selected.
 
-* Seems that organizing the hierarchy of components in subdirectories
-  is a recommended practice. Seems benefical for very big project,
-  however we prefere not to adopt in this one, but just leaving all
-  the functional components in `app/javascript/bundle/comments/components`
-  and the layout components in `app/javascript/bundle/comments/layout`
-
-* We added to the view `app/views/pages/simple.html.erb`: 
-  ```
-  <%= react_component("CommentScreenSimple", props: {}, prerender: false) %
-  ```
-  And copied and adapted a hierarchy of components located at
-  `app/javascript/bundles/comments/components`:
-  * `CommentScreenSimple`:  handles initial fetch of comments after
-     the componente is mounted (using package `axios`), submission of 
-     a new comment (presenting nice animation with CSS), and in its 
-     state keeps comments as `$$comments` 
-     (we guess `$$` means that is a data structure managed with the 
-     package `immutable` --see <https://immutable-js.com/docs/v4.0.0>).
-     By the way here we could reproduce and fix the bug 
-    <https://github.com/shakacode/react-webpack-rails-tutorial/issues/494>)
-    * `CommentBoxSimple`: presents some notes, then a stacked form with
-      the component `CommentFormStacked`, and
-      then the list of comments with the component `CommentList`.
-      * `CommentFormStacked`: Keeps most recent submission in state
-      and handles focus after submitting new (keeps author gives focus
-      to new empty text).  To reference input boxes use attribute
-      `ref` special for React with functions like ReactDOM.findDomNode.
-      Uses `react-bootstrap` (althoug it is not used for example by
-      the component `NavigationBar`).
-      * `CommentList`: Receives as props the list of comments and
-        just presents them with CSS animation by using for each 
-        comment the class `Comment`
-        * `Comment`: presents just one comment, avoids XSS attacks
-          by purifying the markdown given by the user.
-          Changed `sanitize: true` of marked  (deprecated) by usage of 
-          `DOMPurify` (the original tutorial needs improvement in this
-          as we reported at 
-          <https://github.com/shakacode/react-webpack-rails-tutorial/issues/500>).
-
-* We had to add to `app/javascript/packs/application.js`:
-
-```
-import ReactOnRails from 'react-on-rails'
-
-ReactOnRails.setOptions({
-  traceTurbolinks: true
-})
-
-ReactOnRails.register({
-  CommentScreenSimple,
-  Footer,
-  HelloWorld,
-  NavigationBar,
-})
-```
-  It is weird that this is required although:
-  1. NavigationBar and Footer are rendered by the server (they are
-     registered initiall at `app/javascript/packs/server-bundle.js`
-  1. We didn't need to register other componente rendered by the client
-     like `CommentBoxSimple` and its descendants.
-
-
-* react-webpack-rails-tutorial uses a non-default JSON for comments,
-  instead of an array it is an object with one property with name comments,
-  and its value is the array of comments.
-  The standard generated by the scaffold of comments is an array.
-  We preferred to leave the standard array and we made the changes in
-  the code that fetches the JSON.
-
+* In each component that has translatable strings:
+  * Add:
+    ```
+    import { injectIntl } from 'react-intl';
+    import { defaultMessages } from 'lib/i18n/default';
+    ```
+  * Add `intl` as prop whose PropTypes is:dd 
+    ```
+    intl: PropTypes.objectOf(PropTypes.any).isRequired,
+    ...
+    const {x, intl} = this.props;
+    ```
+  * Where needed to translate a string:
+    ```
+    const { formatMessage } = this.props.intl;
+    ...
+    formatMessage(defaultMessages.inputNameLabel)
+    ```
+    where `inputNameLabel` is a property name in `default.js`
+  * Where it loads another component that needs i18n, add
+    as attribute 
+    ```
+    intl={intl}
+    ```
+  * Remove the `export default` of the main component (e.g
+    use only `class CommentFormStacked`) and at the end
+    of the file transform before exporting to add `intl` with:
+    ```
+    export default injectIntl(CommentFormStacked);
+    ```
+* In the component that will handle the selector of language (should be the 
+  highets in hierarchy because the `intl` object will be passed to its
+  descendants), in our case `CommentScreenSimple`, besides the previous
+  steps:
+  * Add
+    ```
+    import { IntlProvider, injectIntl } from 'react-intl';
+    import SelectLanguage from 'lib/i18n/selectLanguage';
+    import { defaultMessages, defaultLocale } from 'lib/i18n/default';
+    import { translations } from 'lib/i18n/translations';
+    ```
+  * Removing `export default`  from the main class and at the end 
+    export the component wrapped like this:
+    ```
+    export default class I18nWrapper extends BaseComponent {
+      constructor(props) {
+        super(props);
+    
+        this.state = {
+          locale: defaultLocale,
+        };
+    
+        _.bindAll(this, 'handleSetLocale');
+      }
+    
+      handleSetLocale(locale) {
+        this.setState({ locale });
+      }
+    
+      render() {
+        const { locale } = this.state;
+        const messages = translations[locale];
+        const InjectedSimpleCommentScreen = injectIntl(CommentScreenSimple);
+    
+        return (
+          <IntlProvider locale={locale} key={locale} messages={messages}>
+            <InjectedSimpleCommentScreen
+              // eslint-disable-next-line react/jsx-props-no-spreading 
+              {...this.props}
+              locale={locale}
+              handleSetLocale={this.handleSetLocale}
+            />
+          </IntlProvider>
+        );
+      }
+    }
+    ```
+    Note that `handleSetLocale` and `locale` should be sent through the
+    descendants chain to th Component that will present component
+    `SelectLanguage` (in this case `CommentBoxSimple`).
 

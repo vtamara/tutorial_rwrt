@@ -4,7 +4,11 @@ import request from 'axios';
 import Immutable from 'immutable';
 import _ from 'lodash';
 import ReactOnRails from 'react-on-rails';
+import { IntlProvider, injectIntl } from 'react-intl';
 import BaseComponent from 'lib/components/BaseComponent';
+import SelectLanguage from 'lib/i18n/selectLanguage';
+import { defaultMessages, defaultLocale } from 'lib/i18n/default';
+import { translations } from 'lib/i18n/translations';
 
 import CommentBoxSimple from './CommentBoxSimple';
 import css from './CommentScreen.module.scss';
@@ -73,7 +77,7 @@ class CommentScreenSimple extends BaseComponent {
   }
 
   render() {
-    const { handleSetLocale, locale } = this.props;
+    const { handleSetLocale, locale, intl } = this.props;
     const cssTransitionGroupClassNames = {
       enter: css.elementEnter,
       enterActive: css.elementEnterActive,
@@ -93,10 +97,42 @@ class CommentScreenSimple extends BaseComponent {
           locale: locale,
           submitCommentError: this.state.submitCommentError,
       }}
+      intl={intl}
       >
       </CommentBoxSimple>
     );
   }
 }
 
-export default CommentScreenSimple;
+export default class I18nWrapper extends BaseComponent {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      locale: defaultLocale,
+    };
+
+    _.bindAll(this, 'handleSetLocale');
+  }
+
+  handleSetLocale(locale) {
+    this.setState({ locale });
+  }
+
+  render() {
+    const { locale } = this.state;
+    const messages = translations[locale];
+    const InjectedSimpleCommentScreen = injectIntl(CommentScreenSimple);
+
+    return (
+      <IntlProvider locale={locale} key={locale} messages={messages}>
+        <InjectedSimpleCommentScreen
+          // eslint-disable-next-line react/jsx-props-no-spreading 
+          {...this.props}
+          locale={locale}
+          handleSetLocale={this.handleSetLocale}
+        />
+      </IntlProvider>
+    );
+  }
+}
