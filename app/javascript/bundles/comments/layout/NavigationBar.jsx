@@ -12,6 +12,7 @@ import PropTypes from 'prop-types';
 function NavigationBar(props) {
   const { commentsCount, pathname } = props;
 
+
   /* eslint-disable new-cap */
   return (
     <nav className="navbar navbar-expand-lg navbar-light bg-ligth navbar-default">
@@ -32,7 +33,10 @@ function NavigationBar(props) {
         </button>
         <div className="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
           <ul className="navbar-nav me-auto">
-            <li className='active'>
+            <li className=''>
+              <a className='nav-link' href='/simple'>Simple React</a>
+            </li>
+            <li className=''>
               <a className='nav-link' href='/comments'>Classic Rails</a>
             </li>
             <li>
@@ -40,6 +44,11 @@ function NavigationBar(props) {
             </li>
             <li>
               <a className='nav-link' href="https://forum.shakacode.com/c/reactjs">Forum</a>
+            </li>
+            <li style={{"margin-top": "0.5em", "margin-left": "2em"}}>
+              <a id="js-comment-count" href="#">
+                Comments: {+commentsCount}
+              </a>
             </li>
           </ul>
         </div>

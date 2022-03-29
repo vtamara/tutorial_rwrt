@@ -3,9 +3,9 @@ Rails.application.routes.draw do
   resources :comments
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
-  root 'comments#index'
+  root 'pages#simple'
 
-  get '/simple', to: 'pages#simple'
+  get 'simple', to: 'pages#simple'
 
   # Defines the root path route ("/")
   # root "articles#index"

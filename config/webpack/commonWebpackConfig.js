@@ -10,6 +10,22 @@ const commonOptions = {
   },
 };
 
+
+// add sass resource loader from react-webpack-rails-tutorial
+const sassLoaderConfig = {
+  loader: 'sass-resources-loader',
+  options: {
+    resources: './app/javascript/assets/stylesheets/app-variables.scss',
+  },
+};
+
+const scssConfigIndex = baseClientWebpackConfig.module.rules.findIndex((config) =>
+  '.scss'.match(config.test),
+);
+
+baseClientWebpackConfig.module.rules[scssConfigIndex].use.push(sassLoaderConfig);
+
+
 // Copy the object using merge b/c the baseClientWebpackConfig and commonOptions are mutable globals
 const commonWebpackConfig = () => merge({}, baseClientWebpackConfig, commonOptions);
 

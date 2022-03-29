@@ -18,7 +18,7 @@ if (test -f tmp/pids/server.pid) then {
 } fi;
 
 # Trying to stop webpacker-dev-server
-pn=`fstat | grep $WEBPACKER_DEV_SERVER_PORT | sed -e "s/^[^\s]* node *\([0-9][0-9]*\) .*/\1/g" | sort -u`
+pn=`fstat | grep ":$WEBPACKER_DEV_SERVER_PORT" | sed -e "s/^[^\s]* node *\([0-9][0-9]*\) .*/\1/g" | sort -u`
 if (test "$pn" != "") then {
   echo "Killing process with node $pn"
   kill -9 $pn
