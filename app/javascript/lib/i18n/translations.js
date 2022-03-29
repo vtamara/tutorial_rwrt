@@ -43,7 +43,7 @@ export const translations = {
         "loading": "Cargando...",
         "description.force_refrech": "Forzar refresco de todos los comentarios.",
         "description.support_markdown": "El texto soporta Markdown sabor Github.",
-        "description.delete_rule": "Los comentarios de más de 24 de antigüedad son eliminados.",
+        "description.delete_rule": "Los comentarios de más de 24 días de antigüedad son eliminados.",
         "description.submit_rule": "Se preserva el nombre. El texto se limpia, entre un envío y otro.",
         "description.see_action_cable": "Para ver como Action Cable actualiza al instante dos navegadores, abran dos navegadores y envíe un comentario!",
         "form.horizontal": "Formulario Horizontal",
