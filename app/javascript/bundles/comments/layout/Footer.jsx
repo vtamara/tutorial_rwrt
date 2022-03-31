@@ -1,12 +1,11 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import BaseComponent from 'lib/components/BaseComponent'
 
 import css from './Footer.module.scss';
 
 export default class Footer extends BaseComponent {
 
-  render() {
+  render = () => {
 
     return (
       <footer>

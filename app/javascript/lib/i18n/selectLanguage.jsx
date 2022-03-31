@@ -2,7 +2,7 @@ import React from 'react';
 
 import { defaultLocale } from './default';
 
-function SelectLanguage(onChange, locale = defaultLocale) {
+const SelectLanguage = (onChange, locale = defaultLocale) => {
   return (
     <select onChange={(e) => onChange(e.target.value)} value={locale}>
       <option value="de">Deutsch</option>

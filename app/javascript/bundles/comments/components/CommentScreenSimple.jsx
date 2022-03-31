@@ -1,16 +1,17 @@
 // eslint-disable-next-line max-classes-per-file
-import React from 'react';
-import request from 'axios';
-import Immutable from 'immutable';
 import _ from 'lodash';
+import Immutable from 'immutable';
+import React from 'react';
 import ReactOnRails from 'react-on-rails';
+import request from 'axios';
 import { IntlProvider, injectIntl } from 'react-intl';
+
 import BaseComponent from 'lib/components/BaseComponent';
-import SelectLanguage from 'lib/i18n/selectLanguage';
+import CommentBoxSimple from './CommentBoxSimple';
 import { defaultMessages, defaultLocale } from 'lib/i18n/default';
+import SelectLanguage from 'lib/i18n/selectLanguage';
 import { translations } from 'lib/i18n/translations';
 
-import CommentBoxSimple from './CommentBoxSimple';
 import css from './CommentScreen.module.scss';
 
 class CommentScreenSimple extends BaseComponent {
@@ -24,14 +25,13 @@ class CommentScreenSimple extends BaseComponent {
       submitCommentError: null,
     };
 
-    _.bindAll(this, 'fetchComments', 'handleCommentSubmit');
   }
 
-  componentDidMount() {
+  componentDidMount = () => {
     this.fetchComments();
   }
 
-  fetchComments() {
+  fetchComments = () => {
     return request
       .get('comments.json', { responseType: 'json' })
       .then((res) => {
@@ -40,7 +40,7 @@ class CommentScreenSimple extends BaseComponent {
       .catch((error) => this.setState({ fetchCommentsError: error }));
   }
 
-  handleCommentSubmit(comment) {
+  handleCommentSubmit = (comment) => {
     this.setState({ isSaving: true });
 
     const requestConfig = {
@@ -67,6 +67,8 @@ class CommentScreenSimple extends BaseComponent {
           submitCommentError: null,
           isSaving: false,
         });
+        let evt = new CustomEvent('comments:added', { size: $$comments.size});
+        window.dispatchEvent(evt);
       })
       .catch((error) => {
         this.setState({
@@ -76,7 +78,7 @@ class CommentScreenSimple extends BaseComponent {
       });
   }
 
-  render() {
+  render = () => {
     const { handleSetLocale, locale, intl } = this.props;
     const cssTransitionGroupClassNames = {
       enter: css.elementEnter,
@@ -111,15 +113,13 @@ export default class I18nWrapper extends BaseComponent {
     this.state = {
       locale: defaultLocale,
     };
-
-    _.bindAll(this, 'handleSetLocale');
   }
 
-  handleSetLocale(locale) {
+  handleSetLocale = (locale) => {
     this.setState({ locale });
   }
 
-  render() {
+  render = () => {
     const { locale } = this.state;
     const messages = translations[locale];
     const InjectedSimpleCommentScreen = injectIntl(CommentScreenSimple);

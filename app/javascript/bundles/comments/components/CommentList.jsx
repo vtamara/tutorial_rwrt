@@ -1,30 +1,27 @@
+import _ from 'lodash';
 import Alert from 'react-bootstrap/Alert';
 import Immutable from 'immutable';
-import React from 'react';
 import PropTypes from 'prop-types';
+import React from 'react';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
-import _ from 'lodash';
-import BaseComponent from 'lib/components/BaseComponent.jsx';
 
+import BaseComponent from 'lib/components/BaseComponent.jsx';
 import Comment from './Comment.jsx';
 
-export const commentPropTypes = {
-  $$comments: PropTypes.instanceOf(Immutable.List).isRequired,
-  // TODO: Update error propType
-  error: PropTypes.string,
-  cssTransitionGroupClassNames: PropTypes.oneOfType([PropTypes.object]).isRequired,
-};
-
 export default class CommentList extends BaseComponent {
-  static propTypes = commentPropTypes;
+  static propTypes = {
+    $$comments: PropTypes.instanceOf(Immutable.List).isRequired,
+    // TODO: Update error propType
+    error: PropTypes.string,
+    cssTransitionGroupClassNames: PropTypes.oneOfType([PropTypes.object]).isRequired,
+  };
 
-  constructor(props, context) {
-    super(props, context);
+  constructor(props) {
+    super(props);
     this.state = {};
-    _.bindAll(this, 'errorWarning');
   }
 
-  errorWarning() {
+  errorWarning = () => {
     // If there is no error, there is nothing to add to the DOM
     if (!this.props.error) return null;
     return (
@@ -35,7 +32,7 @@ export default class CommentList extends BaseComponent {
     );
   }
 
-  render() {
+  render = () => {
     const { $$comments, cssTransitionGroupClassNames } = this.props;
     const commentNodes = $$comments.map(($$comment, index) => (
       // `key` is a React-specific concept and is not mandatory for the

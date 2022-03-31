@@ -1,18 +1,18 @@
+import _ from 'lodash';
+import Immutable from 'immutable';
+import { injectIntl } from 'react-intl';
 import React from 'react';
 import PropTypes from 'prop-types';
-import Immutable from 'immutable';
-import _ from 'lodash';
+
 import BaseComponent from 'lib/components/BaseComponent';
-import { injectIntl } from 'react-intl';
-import SelectLanguage from 'lib/i18n/selectLanguage';
-import { defaultMessages, defaultLocale } from 'lib/i18n/default'; 
 import CommentFormStacked from './CommentFormStacked';
 import CommentList, { commentPropTypes } from './CommentList';
+import { defaultMessages, defaultLocale } from 'lib/i18n/default'; 
+import SelectLanguage from 'lib/i18n/selectLanguage';
 import css from './CommentBox.module.scss';
 
 class CommentBoxSimple extends BaseComponent {
   static propTypes = {
-    // TODO: Update error propType
     actions: PropTypes.shape({
       setLocale: PropTypes.func,
       submitComment: PropTypes.func,
@@ -28,12 +28,11 @@ class CommentBoxSimple extends BaseComponent {
     intl: PropTypes.objectOf(PropTypes.any).isRequired,
   };
 
-  constructor() {
-    super();
-    _.bindAll(this); //, ['refreshComments']);
+  constructor(props) {
+    super(props);
   }
 
-  render() {
+  render = () => {
     const { actions, data, intl } = this.props;
     const { formatMessage } = intl;
     const locale = data.locale || defaultLocale;

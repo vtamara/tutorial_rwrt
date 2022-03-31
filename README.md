@@ -16,6 +16,7 @@ In this branch you find the complete demo.  The intermediate branches are:
 * `3-layout` Layout with react components for Header and Footer.
 * `4-simple` Components for the demo Simple React using `bootstrap-react`
 * `5-i18n`  Adding messages in several languages (including spanish)
+* `6-standard`  Organizing components in a standard way
 
 
 # How to run this demo
@@ -70,110 +71,53 @@ bundle
 
 # How we created this example
 
-* Check previous steps in branch `4-simple`
+* Check previous steps in branch `5-i18n`
 
-* We added the package `react-intl`
+* The standard way for components used was:
 
-* From `react-webpacker-rails-tutorial` we copied `i18n` in
-  `app/javascript/lib/i18n` with the files:
-  * `default.js` Defines the translatable messages in an object where
-     the property name is the name to use in the application with the function
-     `formatMessage`, for example:
-     ```
-     "inputNameLabel": {
-       "id": "input.name.label",
-       "defaultMessage": "Name"
-     },
-     ```
-     In each value there is an object with properties `id` and 
-     `defaultMessage`.
-     `id` is used in the file `translations.js`, `defaultMessage` is the
-     message in the `defaultLocale` (also defined in this file). 
-     We reformatted this file.
-  * `translations.js` is an object with several translations (it repeats
-    english). The id of each string corresponds to an id in `default.js`
-  * `selectLanguage.jsx` Functional React component to select
-    desired language according to the available at `translations.js`.  
-    Receives the function to call once a new language is selected.
-
-* In each component that has translatable strings:
-  * Add:
-    ```
-    import { injectIntl } from 'react-intl';
-    import { defaultMessages } from 'lib/i18n/default';
-    ```
-  * Add `intl` as prop whose PropTypes is:dd 
-    ```
-    intl: PropTypes.objectOf(PropTypes.any).isRequired,
-    ...
-    const {x, intl} = this.props;
-    ```
-  * Where needed to translate a string:
-    ```
-    const { formatMessage } = this.props.intl;
-    ...
-    formatMessage(defaultMessages.inputNameLabel)
-    ```
-    where `inputNameLabel` is a property name in `default.js`
-  * Where it loads another component that needs i18n, add
-    as attribute 
-    ```
-    intl={intl}
-    ```
-  * Remove the `export default` of the main component (e.g
-    use only `class CommentFormStacked`) and at the end
-    of the file transform before exporting to add `intl` with:
-    ```
-    export default injectIntl(CommentFormStacked);
-    ```
-* In the component that will handle the selector of language (should be the 
-  highets in hierarchy because the `intl` object will be passed to its
-  descendants), in our case `CommentScreenSimple`, besides the previous
-  steps:
-  * Add
-    ```
-    import { IntlProvider, injectIntl } from 'react-intl';
-    import SelectLanguage from 'lib/i18n/selectLanguage';
-    import { defaultMessages, defaultLocale } from 'lib/i18n/default';
-    import { translations } from 'lib/i18n/translations';
-    ```
-  * Removing `export default`  from the main class and at the end 
-    export the component wrapped like this:
-    ```
-    export default class I18nWrapper extends BaseComponent {
-      constructor(props) {
-        super(props);
-    
-        this.state = {
-          locale: defaultLocale,
-        };
-    
-        _.bindAll(this, 'handleSetLocale');
-      }
-    
-      handleSetLocale(locale) {
-        this.setState({ locale });
-      }
-    
-      render() {
-        const { locale } = this.state;
-        const messages = translations[locale];
-        const InjectedSimpleCommentScreen = injectIntl(CommentScreenSimple);
-    
-        return (
-          <IntlProvider locale={locale} key={locale} messages={messages}>
-            <InjectedSimpleCommentScreen
-              // eslint-disable-next-line react/jsx-props-no-spreading 
-              {...this.props}
-              locale={locale}
-              handleSetLocale={this.handleSetLocale}
-            />
-          </IntlProvider>
-        );
-      }
+  ```
+  //import of external libraries/components in alphabetical order
+  import PropTypes from 'prop-types'
+  import React from 'react'
+  
+  //import of local libraries/componets in alphabetical order
+  import BaseComponent from 'lib/components/BaseComponent'
+  
+  export default class MyComp extends BaseComponent {
+    static propTypes = {
+      firstProp: PropTypes.number
     }
-    ```
-    Note that `handleSetLocale` and `locale` should be sent through the
-    descendants chain to th Component that will present component
-    `SelectLanguage` (in this case `CommentBoxSimple`).
+  
+    constructor(props) {
+      super(props)
+      //Initialize state and internal var/const
+    }
+  
+    // Functions from here using arrow notation in order not to use bind
+  
+    // Lifecycle
+    DidMount = () => {
+    }
+  
+    // Event handlers and helpers
+    handleClick = () => {
+      // ...
+    }
+  
+    //Finally render
+    render = () => (
+      <div>
+      </div>
+    )
+  }
+  ```
+* However `react_on_rails` can pass the `railsContext` to functional 
+  componentes as he `NavigationBar`.  That for this reason stays as 
+  functional component and in this step we fix the active tab in
+  the NavigationBar of the header by using the railsContext.
+
+* Trying to increase the comment count in the NavigationBar component
+  is difficult because it is rendered server side and window doesn't
+  exist then it is not possible to use the usual event mechanism of
+  Javascript.  Among the solutions for this scenario is Redux.
 

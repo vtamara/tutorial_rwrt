@@ -1,23 +1,24 @@
 /* eslint-disable react/no-find-dom-node, react/no-string-refs */
 
+import _ from 'lodash';
+import Alert from 'react-bootstrap/Alert';
 import React from 'react';
-import PropTypes from 'prop-types';
-import ReactDOM from 'react-dom';
+import Button from 'react-bootstrap/Button';
 import FormControl from 'react-bootstrap/FormControl';
 import FormLabel from 'react-bootstrap/FormLabel';
 import FormGroup from 'react-bootstrap/FormGroup';
-import Button from 'react-bootstrap/Button';
-import Alert from 'react-bootstrap/Alert';
-import _ from 'lodash';
 import { injectIntl } from 'react-intl';
-import { defaultMessages } from 'lib/i18n/default';
+import PropTypes from 'prop-types';
+import ReactDOM from 'react-dom';
+
 import BaseComponent from 'lib/components/BaseComponent';
+import { defaultMessages } from 'lib/i18n/default';
 
 import css from './CommentForm.module.scss';
 
 const emptyComment = { author: '', text: '' };
 
-function bsStyleFor(propName, error) {
+const bsStyleFor = (propName, error) => {
   if (error) {
     const errorData = (error && error.response && error.response.data) || {};
     return propName in errorData ? 'error' : 'success';
@@ -35,16 +36,14 @@ class CommentFormStacked extends BaseComponent {
     intl: PropTypes.objectOf(PropTypes.any).isRequired,
   };
 
-  constructor(props, context) {
-    super(props, context);
+  constructor(props) {
+    super(props);
     this.state = {
       comment: emptyComment,
     };
-
-    _.bindAll(this, ['handleChange', 'handleSubmit', 'resetAndFocus']);
   }
 
-  handleChange() {
+  handleChange  = () => {
     let comment;
 
     comment = {
@@ -55,13 +54,13 @@ class CommentFormStacked extends BaseComponent {
     this.setState({ comment });
   }
 
-  handleSubmit(e) {
+  handleSubmit = (e) => {
     e.preventDefault();
     const { actions } = this.props;
     actions.submitComment(this.state.comment).then(this.resetAndFocus);
   }
 
-  resetAndFocus() {
+  resetAndFocus = () => {
     // Don't reset a form that didn't submit, this results in data loss
     if (this.props.error) return;
 
@@ -73,7 +72,7 @@ class CommentFormStacked extends BaseComponent {
     ref.focus();
   }
 
-  formStacked() {
+  formStacked = () => {
     const { formatMessage } = this.props.intl;
     return (
       <div>
@@ -116,7 +115,7 @@ class CommentFormStacked extends BaseComponent {
     );
   }
 
-  errorWarning() {
+  errorWarning = () => {
     const { error } = this.props;
 
     // If there is no error, there is nothing to add to the DOM
@@ -144,16 +143,10 @@ class CommentFormStacked extends BaseComponent {
     );
   }
 
-  render() {
+  render = () => {
     let inputForm;
     inputForm = this.formStacked();
 
-    const { formatMessage } = this.props.intl;
-
-    // For animation with ReactCSSTransitionGroup
-    //   https://facebook.github.io/react/docs/animation.html
-    // The 500 must correspond to the 0.5s in:
-    //   client/app/bundles/comments/components/CommentBox/CommentBox.module.scss:6
     return (
       <div>
         {inputForm}

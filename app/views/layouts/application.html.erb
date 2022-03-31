@@ -12,8 +12,8 @@
 
   <body>
     <%= react_component("NavigationBar", 
-    props: {commentsCount: ::Comment.all.count, pathname: '/'}, 
-    prerender: true) %>
+                        props: {commentsCount: ::Comment.all.count}, 
+                        prerender: true) %>
 
     <%= yield %>
 

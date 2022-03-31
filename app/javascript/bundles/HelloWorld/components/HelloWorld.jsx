@@ -2,10 +2,17 @@ import PropTypes from 'prop-types';
 import React, { useState } from 'react';
 import style from './HelloWorld.module.css';
 
-const HelloWorld = (props) => {
-  const [name, setName] = useState(props.name);
+export default class HelloWorld {
 
-  return (
+  static propTypes = {
+    name: PropTypes.string.isRequired, // this is passed from the Rails view
+  };
+
+  constructor(props) {
+    const [name, setName] = useState(props.name);
+  }
+
+  render = () => (
     <div>
       <h3>Hello, {name}!</h3>
       <hr />
@@ -17,10 +24,6 @@ const HelloWorld = (props) => {
       </form>
     </div>
   );
+
 };
 
-HelloWorld.propTypes = {
-  name: PropTypes.string.isRequired, // this is passed from the Rails view
-};
-
-export default HelloWorld;
